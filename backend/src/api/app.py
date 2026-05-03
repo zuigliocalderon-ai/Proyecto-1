@@ -15,9 +15,15 @@ from src.services.data_service import DataService
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__, 
-            template_folder='../../../frontend/templates',
-            static_folder='../../../frontend/static')
+# Calculate absolute paths from app.py location
+app_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(app_dir)))
+template_dir = os.path.join(project_root, 'frontend', 'templates')
+static_dir = os.path.join(project_root, 'frontend', 'static')
+
+app = Flask(__name__,
+            template_folder=template_dir,
+            static_folder=static_dir)
 CORS(app)
 
 # Initialize database
