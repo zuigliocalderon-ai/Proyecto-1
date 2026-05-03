@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Predictions Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Sports Predictions Dashboard</h1>
+            <p>Track your betting performance and upcoming matches</p>
+        </header>
+
+        <!-- Metrics Section -->
+        <div class="metrics-grid" id="metrics-grid">
+            <div class="loading">Loading metrics...</div>
+        </div>
+        <!-- Matches Section -->
+        <div class="matches-section">
+            <h2>Sports Matches</h2>
+            <div class="matches-list" id="matches-list">
+                <div class="loading">Loading matches...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Detail Modal -->
+    <div id="match-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-match-title">Match Details</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <div class="loading">Loading match details...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
