@@ -42,30 +42,36 @@ def test_db_connection():
     try:
         engine, Session = create_engine_and_session()
         session = Session()
-        
-        # Test basic query
-        result = session.execute(text('SELECT version();'))
-        version = result.fetchone()[0]
-        print(f"✓ Database connected: {version}")
-        
-        # Test pgvector extension
-        try:
-            session.execute(text('CREATE EXTENSION IF NOT EXISTS vector;'))
-            print("✓ pgvector extension available")
-        except Exception as e:
-            print(f"⚠ pgvector not available: {e}")
-        
-        # Test TimescaleDB extension
-        try:
-            session.execute(text('CREATE EXTENSION IF NOT EXISTS timescaledb;'))
-            print("✓ TimescaleDB extension available")
-        except Exception as e:
-            print(f"⚠ TimescaleDB not available: {e}")
-        
+
+        # Test basic query with database type detection
+        db_url = DatabaseConfig.DATABASE_URL
+        if 'sqlite' in db_url:
+            result = session.execute(text('SELECT sqlite_version();'))
+            version = result.fetchone()[0]
+            print(f"✓ SQLite database connected: {version}")
+        else:
+            result = session.execute(text('SELECT version();'))
+            version = result.fetchone()[0]
+            print(f"✓ PostgreSQL database connected: {version}")
+
+            # Test pgvector extension
+            try:
+                session.execute(text('CREATE EXTENSION IF NOT EXISTS vector;'))
+                print("✓ pgvector extension available")
+            except Exception as e:
+                print(f"⚠ pgvector not available: {e}")
+
+            # Test TimescaleDB extension
+            try:
+                session.execute(text('CREATE EXTENSION IF NOT EXISTS timescaledb;'))
+                print("✓ TimescaleDB extension available")
+            except Exception as e:
+                print(f"⚠ TimescaleDB not available: {e}")
+
         session.commit()
         session.close()
         return True
-        
+
     except Exception as e:
         print(f"✗ Database connection failed: {e}")
         return False
