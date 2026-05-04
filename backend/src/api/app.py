@@ -31,7 +31,12 @@ db = init_database(app)
 
 # Test database connection on startup
 print("Testing database connection...")
-test_db_connection()
+# Test database connection on startup (skip in production if DB unavailable)
+if os.getenv("FLASK_ENV") != "production":
+    try:
+        test_db_connection()
+    except Exception as e:
+        print(f"Warning: DB connection test failed: {e}")
 
 # Get odds API key from environment (optional)
 ODDS_API_KEY = os.getenv('ODDS_API_KEY')

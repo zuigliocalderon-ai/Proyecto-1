@@ -10,8 +10,20 @@ import sys
 backend_path = os.path.join(os.path.dirname(__file__), 'backend')
 sys.path.insert(0, backend_path)
 
-# Import the Flask app
-from src.api.app import app
+# Set environment for production
+os.environ.setdefault('FLASK_ENV', 'production')
 
+# Import the Flask app - this will initialize everything
+try:
+    from src.api.app import app
+    print("✅ Flask app loaded successfully")
+except Exception as e:
+    print(f"❌ Error loading Flask app: {e}")
+    import traceback
+    traceback.print_exc()
+    raise
+
+# Gunicorn will use this app object
 if __name__ == '__main__':
-    app.run()
+    # For local testing only
+    app.run(debug=False)
