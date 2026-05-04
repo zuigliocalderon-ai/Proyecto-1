@@ -1,44 +1,516 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sports Predictions Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Predicciones Deportivas - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f1419;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1a1f2e 0%, #16213e 100%);
+            border-bottom: 1px solid #2a3f5f;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .user-info span {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .metrics-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #1a1f2e 0%, #16213e 100%);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #2a3f5f;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+
+        .metric-change {
+            font-size: 13px;
+            color: #4caf50;
+        }
+
+        .predictions-section {
+            margin-bottom: 40px;
+        }
+
+        .predictions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .prediction-card {
+            background: linear-gradient(135deg, #1a1f2e 0%, #16213e 100%);
+            border-radius: 12px;
+            border: 1px solid #2a3f5f;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .prediction-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .prediction-header {
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+            padding: 16px;
+            border-bottom: 1px solid #2a3f5f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .match-time {
+            font-size: 12px;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .match-league {
+            background: rgba(0, 212, 255, 0.15);
+            color: #00d4ff;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .prediction-teams {
+            padding: 20px;
+        }
+
+        .teams-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team {
+            flex: 1;
+            text-align: center;
+        }
+
+        .team-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 8px;
+        }
+
+        .team-odds {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .vs-text {
+            font-size: 12px;
+            color: #a0a0a0;
+            font-weight: 600;
+        }
+
+        .prediction-stats {
+            padding: 0 20px 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            border-bottom: 1px solid #2a3f5f;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .prediction-result {
+            padding: 20px;
+        }
+
+        .prediction-title {
+            font-size: 13px;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .prediction-winner {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4caf50;
+            margin-bottom: 12px;
+        }
+
+        .confidence-section {
+            margin-bottom: 12px;
+        }
+
+        .confidence-label {
+            font-size: 12px;
+            color: #a0a0a0;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50 0%, #45a049 100%);
+            border-radius: 4px;
+        }
+
+        .odds-display {
+            display: flex;
+            gap: 10px;
+        }
+
+        .odds-item {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .odds-item-label {
+            font-size: 11px;
+            color: #a0a0a0;
+            margin-bottom: 4px;
+        }
+
+        .odds-item-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #a0a0a0;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a3f5f;
+            color: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            border-color: #00d4ff;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .predictions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="navbar">
+        <h1>⚽ Predicciones Deportivas</h1>
+        <div class="navbar-right">
+            <div class="user-info">
+                <span id="user-name">{{ user_name }}</span>
+            </div>
+            <a href="/logout" class="logout-btn">Salir</a>
+        </div>
+    </div>
+
     <div class="container">
-        <header class="header">
-            <h1>Sports Predictions Dashboard</h1>
-            <p>Track your betting performance and upcoming matches</p>
-        </header>
-
-        <!-- Metrics Section -->
-        <div class="metrics-grid" id="metrics-grid">
-            <div class="loading">Loading metrics...</div>
+        <div class="metrics-section">
+            <h2 class="section-title">📊 Tu Desempeño</h2>
+            <div class="metrics-grid" id="metrics-grid">
+                <div class="loading">Cargando métricas...</div>
+            </div>
         </div>
-        <!-- Matches Section -->
-        <div class="matches-section">
-            <h2>Sports Matches</h2>
-            <div class="matches-list" id="matches-list">
-                <div class="loading">Loading matches...</div>
+
+        <div class="predictions-section">
+            <h2 class="section-title">🎯 Predicciones</h2>
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterPredictions('all')">Todas</button>
+                <button class="filter-btn" onclick="filterPredictions('high')">Alta Confianza (70%+)</button>
+            </div>
+            <div class="predictions-grid" id="predictions-grid">
+                <div class="loading">Cargando predicciones...</div>
             </div>
         </div>
     </div>
 
-    <!-- Match Detail Modal -->
-    <div id="match-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-match-title">Match Details</h2>
-                <span class="close">&times;</span>
-            </div>
-            <div class="modal-body" id="modal-body">
-                <div class="loading">Loading match details...</div>
-            </div>
-        </div>
-    </div>
+    <script>
+        async function loadMetrics() {
+            try {
+                const response = await fetch('/api/metrics');
+                const metrics = await response.json();
+                displayMetrics(metrics);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
 
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+        function displayMetrics(metrics) {
+            const grid = document.getElementById('metrics-grid');
+            const profit = metrics.current_balance - metrics.starting_balance;
+
+            grid.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-label">Tasa de Victorias</div>
+                    <div class="metric-value">${metrics.win_rate}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Balance Actual</div>
+                    <div class="metric-value">$${metrics.current_balance.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Ganancia Total</div>
+                    <div class="metric-value">${profit >= 0 ? '+' : ''}$${profit.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">ROI</div>
+                    <div class="metric-value">${metrics.roi}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total de Apuestas</div>
+                    <div class="metric-value">${metrics.total_bets}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Tasa de Éxito</div>
+                    <div class="metric-value">${Math.round((metrics.successful_bets / metrics.total_bets) * 100)}%</div>
+                </div>
+            `;
+        }
+
+        async function loadPredictions() {
+            try {
+                const response = await fetch('/api/upcoming-matches');
+                const matches = await response.json();
+                window.allPredictions = matches;
+                displayPredictions(matches);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function displayPredictions(matches) {
+            const grid = document.getElementById('predictions-grid');
+            grid.innerHTML = matches.map(match => `
+                <div class="prediction-card" data-confidence="${match.prediction.confidence}">
+                    <div class="prediction-header">
+                        <div class="match-time">${match.date} ${match.time}</div>
+                        <span class="match-league">${match.league}</span>
+                    </div>
+                    <div class="prediction-teams">
+                        <div class="teams-row">
+                            <div class="team">
+                                <div class="team-name">${match.team1}</div>
+                                <div class="team-odds">${match.prediction.odds.home}</div>
+                            </div>
+                            <div class="vs-text">VS</div>
+                            <div class="team">
+                                <div class="team-name">${match.team2}</div>
+                                <div class="team-odds">${match.prediction.odds.away}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prediction-stats">
+                        <div class="stat">
+                            <div class="stat-label">Puntos ${match.team1}</div>
+                            <div class="stat-value">${match.stats.team1_avg_points}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Puntos ${match.team2}</div>
+                            <div class="stat-value">${match.stats.team2_avg_points}</div>
+                        </div>
+                    </div>
+                    <div class="prediction-result">
+                        <div class="prediction-title">Predicción</div>
+                        <div class="prediction-winner">✅ ${match.prediction.winner}</div>
+                        <div class="confidence-section">
+                            <div class="confidence-label">
+                                <span>Confianza</span>
+                                <span>${match.prediction.confidence}%</span>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: ${match.prediction.confidence}%"></div>
+                            </div>
+                        </div>
+                        <div class="odds-display">
+                            <div class="odds-item">
+                                <div class="odds-item-label">${match.team1}</div>
+                                <div class="odds-item-value">${match.prediction.odds.home}</div>
+                            </div>
+                            <div class="odds-item">
+                                <div class="odds-item-label">${match.team2}</div>
+                                <div class="odds-item-value">${match.prediction.odds.away}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPredictions(type) {
+            const cards = document.querySelectorAll('.prediction-card');
+            const btns = document.querySelectorAll('.filter-btn');
+
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            cards.forEach(card => {
+                const confidence = parseInt(card.dataset.confidence);
+                const show = type === 'all' || (type === 'high' && confidence >= 70);
+                card.style.display = show ? '' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMetrics();
+            loadPredictions();
+        });
+    </script>
 </body>
 </html>
