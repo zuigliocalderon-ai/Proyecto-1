@@ -55,31 +55,34 @@ def get_matches():
     return jsonify([
         {
             'id': 1,
-            'home': 'Miami Heat',
-            'away': 'Boston Celtics',
+            'team1': 'Miami Heat',
+            'team2': 'Boston Celtics',
             'home_score': 105,
             'away_score': 98,
             'date': '2026-05-04',
+            'time': '19:30',
             'status': 'completed',
             'odds': 1.85
         },
         {
             'id': 2,
-            'home': 'Lakers',
-            'away': 'Golden State Warriors',
+            'team1': 'Lakers',
+            'team2': 'Golden State Warriors',
             'home_score': None,
             'away_score': None,
             'date': '2026-05-05',
+            'time': '20:00',
             'status': 'upcoming',
             'odds': 1.92
         },
         {
             'id': 3,
-            'home': 'Denver Nuggets',
-            'away': 'Phoenix Suns',
+            'team1': 'Denver Nuggets',
+            'team2': 'Phoenix Suns',
             'home_score': None,
             'away_score': None,
             'date': '2026-05-05',
+            'time': '21:00',
             'status': 'upcoming',
             'odds': 2.15
         }
