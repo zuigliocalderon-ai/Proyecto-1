@@ -41,36 +41,61 @@ def api_health():
 def get_teams():
     return jsonify({
         'teams': [
-            {'id': 1, 'name': 'Miami Heat', 'conference': 'East'},
-            {'id': 2, 'name': 'Boston Celtics', 'conference': 'East'},
-            {'id': 3, 'name': 'Lakers', 'conference': 'West'},
-        ],
-        'message': 'NBA teams mock data'
+            {'id': 1, 'name': 'Miami Heat', 'conference': 'East', 'wins': 45, 'losses': 35},
+            {'id': 2, 'name': 'Boston Celtics', 'conference': 'East', 'wins': 48, 'losses': 32},
+            {'id': 3, 'name': 'Lakers', 'conference': 'West', 'wins': 42, 'losses': 38},
+            {'id': 4, 'name': 'Golden State Warriors', 'conference': 'West', 'wins': 40, 'losses': 40},
+            {'id': 5, 'name': 'Denver Nuggets', 'conference': 'West', 'wins': 47, 'losses': 33},
+        ]
     }), 200
 
 @app.route('/api/matches')
 def get_matches():
-    return jsonify({
-        'matches': [
-            {
-                'id': 1,
-                'home': 'Miami Heat',
-                'away': 'Boston Celtics',
-                'date': '2026-05-04',
-                'odds': {'home': 1.85, 'away': 2.05}
-            }
-        ],
-        'message': 'Live matches with odds'
-    }), 200
+    """Return matches in the format expected by dashboard.js"""
+    return jsonify([
+        {
+            'id': 1,
+            'home': 'Miami Heat',
+            'away': 'Boston Celtics',
+            'home_score': 105,
+            'away_score': 98,
+            'date': '2026-05-04',
+            'status': 'completed',
+            'odds': 1.85
+        },
+        {
+            'id': 2,
+            'home': 'Lakers',
+            'away': 'Golden State Warriors',
+            'home_score': None,
+            'away_score': None,
+            'date': '2026-05-05',
+            'status': 'upcoming',
+            'odds': 1.92
+        },
+        {
+            'id': 3,
+            'home': 'Denver Nuggets',
+            'away': 'Phoenix Suns',
+            'home_score': None,
+            'away_score': None,
+            'date': '2026-05-05',
+            'status': 'upcoming',
+            'odds': 2.15
+        }
+    ]), 200
 
 @app.route('/api/metrics')
 def get_metrics():
+    """Return metrics in the format expected by dashboard.js"""
     return jsonify({
-        'win_rate': 0.65,
-        'profit': 1250,
-        'roi': 0.35,
-        'balance': 4750,
-        'message': 'Dashboard metrics'
+        'win_rate': 65,
+        'current_balance': 4750,
+        'starting_balance': 3500,
+        'total_profit': 1250,
+        'roi': 35,
+        'total_bets': 20,
+        'successful_bets': 13
     }), 200
 
 if __name__ == '__main__':
