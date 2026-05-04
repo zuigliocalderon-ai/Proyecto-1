@@ -3,19 +3,10 @@ services:
     name: sports-predictions-api
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn -w 4 -b 0.0.0.0:$PORT "wsgi:app"
+    buildCommand: pip install -r requirements-simple.txt
+    startCommand: gunicorn -w 4 -b 0.0.0.0:$PORT app:app
     envVars:
       - key: FLASK_ENV
         value: production
-      - key: DATABASE_URL
-        scope: build
       - key: ODDS_API_KEY
-        scope: build
-      - key: SECRET_KEY
-        scope: build
-
-  - type: pserv
-    name: sports-predictions-db
-    plan: free
-    ipAllowList: []
+        value: 9e76e9a371972c3f41c03820ba1879db
